@@ -1,0 +1,136 @@
+{% extends "base.html" %}
+
+{% block title %}Pricing - WhatsFlow Automation{% endblock %}
+
+{% block extra_css %}
+<style>
+    .pricing-card {
+        background: white;
+        border-radius: 12px;
+        padding: 2.5rem;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+        transition: transform 0.3s;
+        position: relative;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .pricing-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+    }
+
+    .pricing-card.featured {
+        border: 2px solid var(--accent-color);
+        transform: scale(1.05);
+    }
+
+    .pricing-card.featured:hover {
+        transform: scale(1.05) translateY(-10px);
+    }
+
+    .price {
+        font-size: 3rem;
+        font-weight: 800;
+        color: var(--primary-color);
+        margin: 1.5rem 0;
+    }
+
+    .price span {
+        font-size: 1rem;
+        font-weight: 400;
+        opacity: 0.7;
+    }
+
+    .features-list {
+        list-style: none;
+        padding: 0;
+        margin: 2rem 0;
+        flex-grow: 1;
+    }
+
+    .features-list li {
+        margin-bottom: 1rem;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .check-icon {
+        color: var(--accent-color);
+    }
+
+    .badge {
+        background-color: var(--accent-color);
+        color: var(--primary-color);
+        padding: 5px 12px;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        font-weight: 700;
+        position: absolute;
+        top: -12px;
+        left: 50%;
+        transform: translateX(-50%);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<section class="hero" style="padding: 4rem 2rem;">
+    <div class="container">
+        <h1>Simple, Transparent Pricing</h1>
+        <p>Choose the plan that fits your business needs. No hidden fees.</p>
+    </div>
+</section>
+
+<section class="pricing-content" style="padding: 5rem 2rem;">
+    <div class="container">
+        <div class="features-grid" style="align-items: flex-start;">
+
+            {% for plan in plans %}
+            <!-- {{ plan.plan_name }} Plan -->
+            <div class="pricing-card {% if plan.is_featured %}featured{% endif %}">
+                {% if plan.is_featured %}
+                <div class="badge">MOST POPULAR</div>
+                {% endif %}
+                <h3>{{ plan.plan_name }} Plan</h3>
+                <div class="price">
+                    ${{ "%.0f"|format(plan.current_price) }}<span>/month</span>
+                </div>
+                {% if plan.discount_percent > 0 %}
+                <p style="text-decoration: line-through; opacity: 0.6; margin-top: -1rem;">
+                    Was ${{ "%.0f"|format(plan.base_price) }}/month
+                </p>
+                <p style="color: #28a745; font-weight: 600; margin-top: 0.5rem;">
+                    <i class="fas fa-tag"></i> {{ plan.discount_percent }}% OFF - Save ${{ "%.0f"|format(plan.base_price
+                    - plan.current_price) }}/month!
+                </p>
+                {% endif %}
+                <p>
+                    {% if plan.plan_name == 'Starter' %}
+                    Perfect for small businesses just getting started with automation.
+                    {% elif plan.plan_name == 'Pro' %}
+                    Advanced features for growing businesses needing more power.
+                    {% elif plan.plan_name == 'Business' %}
+                    Full-scale automation solution for established enterprises.
+                    {% endif %}
+                </p>
+                <ul class="features-list">
+                    {% for feature in plan.features_list %}
+                    <li><i class="fas fa-check check-icon"></i> {{ feature }}</li>
+                    {% endfor %}
+                </ul>
+                <a href="{{ plan.checkout_url }}"
+                    class="{% if plan.is_featured %}btn-primary{% else %}btn-secondary{% endif %}"
+                    style="text-align: center;">Subscribe Now</a>
+            </div>
+            {% endfor %}
+
+        </div>
+
+        <div style="text-align: center; margin-top: 3rem; opacity: 0.7;">
+            <p><i class="fas fa-lock"></i> Billing processed securely via Chariow checkout.</p>
+        </div>
+    </div>
+</section>
+{% endblock %}

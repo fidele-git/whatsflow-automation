@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pricing Management - WhatsFlow Admin</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        .pricing-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .pricing-card {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .pricing-card.featured {
+            border: 2px solid var(--accent-color);
+        }
+
+        .pricing-card h3 {
+            margin-top: 0;
+            color: var(--primary-color);
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: #495057;
+        }
+
+        .form-group input[type="number"],
+        .form-group input[type="range"] {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 1rem;
+        }
+
+        .form-group input[type="range"] {
+            padding: 0;
+        }
+
+        .price-display {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: var(--primary-color);
+            margin: 1rem 0;
+        }
+
+        .price-display small {
+            font-size: 1rem;
+            opacity: 0.7;
+        }
+
+        .discount-display {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+
+        .discount-value {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--accent-color);
+        }
+
+        .original-price {
+            text-decoration: line-through;
+            opacity: 0.6;
+            font-size: 1.2rem;
+        }
+
+        .savings {
+            color: #28a745;
+            font-weight: 600;
+            margin-top: 0.5rem;
+        }
+    </style>
+</head>
+
+<body class="admin-body">
+    <!-- Sidebar -->
+    <aside class="admin-sidebar">
+        <div class="sidebar-brand">
+            <i class="fab fa-whatsapp" style="margin-right: 10px; color: var(--accent-color);"></i> WhatsFlow
+        </div>
+        <ul class="sidebar-menu">
+            <li><a href="{{ url_for('admin_dashboard') }}"><i class="fas fa-home"></i> Dashboard</a></li>
+            <li><a href="{{ url_for('admin_submissions') }}"><i class="fas fa-users"></i> Submissions</a></li>
+            <li><a href="{{ url_for('admin_pricing') }}" class="active"><i class="fas fa-tags"></i> Pricing</a></li>
+            <li><a href="{{ url_for('admin_settings') }}"><i class="fas fa-cog"></i> Settings</a></li>
+            <li><a href="{{ url_for('index') }}" target="_blank"><i class="fas fa-external-link-alt"></i> View Site</a>
+            </li>
+            <li><a href="{{ url_for('admin_logout') }}"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+        </ul>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="admin-main">
+        <header class="admin-header">
+            <div class="user-info">
+                <span>Admin User</span>
+                <i class="fas fa-user-circle" style="margin-left: 10px; font-size: 1.5rem;"></i>
+            </div>
+        </header>
+
+        <div class="admin-content">
+            <h2>Pricing Management</h2>
+            <p style="opacity: 0.7; margin-bottom: 2rem;">Update pricing and apply discounts for your plans</p>
+
+            {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+            {% for category, message in messages %}
+            <div class="alert alert-{{ category }}"
+                style="margin-bottom: 1rem; padding: 10px; border-radius: 4px; background: #d4edda; color: #155724;">
+                {{ message }}</div>
+            {% endfor %}
+            {% endif %}
+            {% endwith %}
+
+            <div class="pricing-grid">
+                {% for plan in plans %}
+                <div class="pricing-card {% if plan.is_featured %}featured{% endif %}">
+                    <h3>{{ plan.plan_name }} Plan</h3>
+
+                    <form action="{{ url_for('update_pricing', plan_id=plan.id) }}" method="POST">
+                        <div class="form-group">
+                            <label for="base_price_{{ plan.id }}">Base Price ($)</label>
+                            <input type="number" id="base_price_{{ plan.id }}" name="base_price"
+                                value="{{ plan.base_price }}" min="0" step="0.01" required
+                                onchange="updatePrice({{ plan.id }})">
+                        </div>
+
+                        <div class="form-group">
+                            <div class="discount-display">
+                                <label for="discount_{{ plan.id }}">Discount</label>
+                                <span class="discount-value" id="discount_value_{{ plan.id }}">{{ plan.discount_percent
+                                    }}%</span>
+                            </div>
+                            <input type="range" id="discount_{{ plan.id }}" name="discount_percent"
+                                value="{{ plan.discount_percent }}" min="0" max="100"
+                                oninput="updatePrice({{ plan.id }})">
+                        </div>
+
+                        <div class="price-display" id="price_display_{{ plan.id }}">
+                            ${{ "%.2f"|format(plan.current_price) }}<small>/month</small>
+                        </div>
+
+                        {% if plan.discount_percent > 0 %}
+                        <div class="original-price" id="original_price_{{ plan.id }}">
+                            Original: ${{ "%.2f"|format(plan.base_price) }}
+                        </div>
+                        <div class="savings" id="savings_{{ plan.id }}">
+                            Save ${{ "%.2f"|format(plan.base_price - plan.current_price) }}/month
+                        </div>
+                        {% else %}
+                        <div class="original-price" id="original_price_{{ plan.id }}" style="display: none;">
+                        </div>
+                        <div class="savings" id="savings_{{ plan.id }}" style="display: none;"></div>
+                        {% endif %}
+
+                        <button type="submit" class="btn-primary" style="width: 100%; margin-top: 1rem;">
+                            <i class="fas fa-save"></i> Update Pricing
+                        </button>
+                    </form>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </main>
+
+    <script>
+        function updatePrice(planId) {
+            const basePrice = parseFloat(document.getElementById(`base_price_${planId}`).value) || 0;
+            const discount = parseInt(document.getElementById(`discount_${planId}`).value) || 0;
+            const currentPrice = basePrice * (1 - discount / 100);
+            const savings = basePrice - currentPrice;
+
+            // Update discount value display
+            document.getElementById(`discount_value_${planId}`).textContent = discount + '%';
+
+            // Update price display
+            document.getElementById(`price_display_${planId}`).innerHTML =
+                `$${currentPrice.toFixed(2)}<small>/month</small>`;
+
+            // Show/hide original price and savings
+            const originalPriceEl = document.getElementById(`original_price_${planId}`);
+            const savingsEl = document.getElementById(`savings_${planId}`);
+
+            if (discount > 0) {
+                originalPriceEl.style.display = 'block';
+                originalPriceEl.textContent = `Original: $${basePrice.toFixed(2)}`;
+                savingsEl.style.display = 'block';
+                savingsEl.textContent = `Save $${savings.toFixed(2)}/month`;
+            } else {
+                originalPriceEl.style.display = 'none';
+                savingsEl.style.display = 'none';
+            }
+        }
+    </script>
+</body>
+
+</html>

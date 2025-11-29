@@ -1,0 +1,118 @@
+{% extends "base.html" %}
+
+{% block title %}Get Started - WhatsFlow Automation{% endblock %}
+
+{% block extra_css %}
+<style>
+    .form-container {
+        background: white;
+        padding: 3rem;
+        border-radius: 12px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+        max-width: 700px;
+        margin: 0 auto;
+    }
+
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+
+    .form-label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-weight: 500;
+        color: var(--primary-color);
+    }
+
+    .form-control {
+        width: 100%;
+        padding: 12px;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        font-family: inherit;
+        font-size: 1rem;
+        transition: border-color 0.3s;
+    }
+
+    .form-control:focus {
+        outline: none;
+        border-color: var(--accent-color);
+        box-shadow: 0 0 0 3px rgba(0, 224, 184, 0.1);
+    }
+
+    textarea.form-control {
+        resize: vertical;
+        min-height: 120px;
+    }
+
+    .required {
+        color: red;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<section class="hero" style="padding: 4rem 2rem;">
+    <div class="container">
+        <h1>Get Started with WhatsFlow</h1>
+        <p>Fill out the form below to start automating your WhatsApp conversations.</p>
+    </div>
+</section>
+
+<section class="contact-content" style="padding: 3rem 2rem 5rem;">
+    <div class="container">
+        <div class="form-container">
+            <form action="{{ url_for('contact') }}" method="POST">
+                <div class="form-group">
+                    <label for="full_name" class="form-label">Full Name <span class="required">*</span></label>
+                    <input type="text" id="full_name" name="full_name" class="form-control" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="business_name" class="form-label">Business Name <span class="required">*</span></label>
+                    <input type="text" id="business_name" name="business_name" class="form-control" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="email" class="form-label">Email Address <span class="required">*</span></label>
+                    <input type="email" id="email" name="email" class="form-control" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="whatsapp_number" class="form-label">WhatsApp Number <span
+                            class="required">*</span></label>
+                    <input type="tel" id="whatsapp_number" name="whatsapp_number" class="form-control"
+                        placeholder="+1 234 567 8900" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="country" class="form-label">Country <span class="required">*</span></label>
+                    <input type="text" id="country" name="country" class="form-control" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="plan_selected" class="form-label">Interested Plan <span
+                            class="required">*</span></label>
+                    <select id="plan_selected" name="plan_selected" class="form-control" required>
+                        <option value="" disabled selected>Select a plan...</option>
+                        {% for plan in plans %}
+                        <option value="{{ plan.plan_name }}">{{ plan.plan_name }} Plan (${{
+                            "%.2f"|format(plan.current_price) }}/mo)</option>
+                        {% endfor %}
+                        <option value="Custom">I need a custom solution</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="message" class="form-label">Message / Requirements</label>
+                    <textarea id="message" name="message" class="form-control"
+                        placeholder="Tell us about your automation needs..."></textarea>
+                </div>
+
+                <button type="submit" class="btn-primary" style="width: 100%; font-size: 1.1rem;">Submit
+                    Request</button>
+            </form>
+        </div>
+    </div>
+</section>
+{% endblock %}

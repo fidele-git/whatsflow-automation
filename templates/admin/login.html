@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Login - WhatsFlow Automation</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+
+<body class="login-container">
+    <div class="login-card">
+        <div style="text-align: center; margin-bottom: 2rem;">
+            <h2 style="color: var(--primary-color);">WhatsFlow Admin</h2>
+            <p>Please sign in to continue</p>
+        </div>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+        {% for category, message in messages %}
+        <div class="alert alert-{{ category }}"
+            style="margin-bottom: 1rem; padding: 10px; border-radius: 4px; background: #f8d7da; color: #721c24;">{{
+            message }}</div>
+        {% endfor %}
+        {% endif %}
+        {% endwith %}
+
+        <form method="POST">
+            <div style="margin-bottom: 1rem;">
+                <label style="display: block; margin-bottom: 0.5rem;">Email Address</label>
+                <input type="email" name="email" class="form-control"
+                    style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px;" required>
+            </div>
+
+            <div style="margin-bottom: 1.5rem;">
+                <label style="display: block; margin-bottom: 0.5rem;">Password</label>
+                <input type="password" name="password" class="form-control"
+                    style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px;" required>
+            </div>
+
+            <button type="submit" class="btn-primary" style="width: 100%;">Sign In</button>
+        </form>
+    </div>
+</body>
+
+</html>

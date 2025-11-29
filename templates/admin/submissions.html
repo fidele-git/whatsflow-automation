@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Submissions - WhatsFlow Admin</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+
+<body class="admin-body">
+    <!-- Sidebar -->
+    <aside class="admin-sidebar">
+        <div class="sidebar-brand">
+            <i class="fab fa-whatsapp" style="margin-right: 10px; color: var(--accent-color);"></i> WhatsFlow
+        </div>
+        <ul class="sidebar-menu">
+            <li><a href="{{ url_for('admin_dashboard') }}"><i class="fas fa-home"></i> Dashboard</a></li>
+            <li><a href="{{ url_for('admin_submissions') }}" class="active"><i class="fas fa-users"></i> Submissions</a>
+            </li>
+            <li><a href="{{ url_for('admin_pricing') }}"><i class="fas fa-tags"></i> Pricing</a></li>
+            <li><a href="{{ url_for('admin_settings') }}"><i class="fas fa-cog"></i> Settings</a></li>
+            <li><a href="{{ url_for('index') }}" target="_blank"><i class="fas fa-external-link-alt"></i> View Site</a>
+            </li>
+            <li><a href="{{ url_for('admin_logout') }}"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+        </ul>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="admin-main">
+        <header class="admin-header">
+            <div class="user-info">
+                <span>Admin User</span>
+                <i class="fas fa-user-circle" style="margin-left: 10px; font-size: 1.5rem;"></i>
+            </div>
+        </header>
+
+        <div class="admin-content">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                <h2>All Submissions</h2>
+                <div class="export-dropdown">
+                    <button class="btn-primary" onclick="toggleExportMenu()">
+                        <i class="fas fa-download"></i> Export As <i class="fas fa-chevron-down"
+                            style="margin-left: 5px;"></i>
+                    </button>
+                    <div id="export-menu" class="export-menu">
+                        <a href="{{ url_for('export_data', format='csv') }}"><i class="fas fa-file-csv"></i> CSV</a>
+                        <a href="{{ url_for('export_data', format='excel') }}"><i class="fas fa-file-excel"></i>
+                            Excel</a>
+                        <a href="{{ url_for('export_data', format='pdf') }}"><i class="fas fa-file-pdf"></i> PDF</a>
+                        <a href="{{ url_for('export_data', format='json') }}"><i class="fas fa-file-code"></i> JSON</a>
+                        <a href="{{ url_for('export_data', format='word') }}"><i class="fas fa-file-word"></i> Word</a>
+                    </div>
+                </div>
+
+                <script>
+                    function toggleExportMenu() {
+                        document.getElementById("export-menu").classList.toggle("show");
+                    }
+
+                    // Close the dropdown if the user clicks outside of it
+                    window.onclick = function (event) {
+                        if (!event.target.closest('.export-dropdown')) {
+                            var dropdowns = document.getElementsByClassName("export-menu");
+                            for (var i = 0; i < dropdowns.length; i++) {
+                                var openDropdown = dropdowns[i];
+                                if (openDropdown.classList.contains('show')) {
+                                    openDropdown.classList.remove('show');
+                                }
+                            }
+                        }
+                    }
+                </script>
+            </div>
+
+            {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+            {% for category, message in messages %}
+            <div class="alert alert-{{ category }}"
+                style="margin-bottom: 1rem; padding: 10px; border-radius: 4px; background: #d4edda; color: #155724;">{{
+                message }}</div>
+            {% endfor %}
+            {% endif %}
+            {% endwith %}
+
+            <div class="table-container">
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th style="cursor: pointer;">Date <i class="fas fa-sort"></i></th>
+                            <th style="cursor: pointer;">Name <i class="fas fa-sort"></i></th>
+                            <th style="cursor: pointer;">Business <i class="fas fa-sort"></i></th>
+                            <th>Contact</th>
+                            <th style="cursor: pointer;">Plan <i class="fas fa-sort"></i></th>
+                            <th>Message</th>
+                            <th style="cursor: pointer;">Status <i class="fas fa-sort"></i></th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for sub in submissions %}
+                        <tr>
+                            <td>{{ sub.created_at.strftime('%Y-%m-%d %H:%M') }}</td>
+                            <td>{{ sub.full_name }}</td>
+                            <td>{{ sub.business_name }}</td>
+                            <td>
+                                <div>{{ sub.email }}</div>
+                                <div style="font-size: 0.85rem; color: #666;">{{ sub.whatsapp_number }}</div>
+                                <div style="font-size: 0.85rem; color: #666;">{{ sub.country }}</div>
+                            </td>
+                            <td>{{ sub.plan_selected }}</td>
+                            <td style="max-width: 200px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;"
+                                title="{{ sub.message }}">{{ sub.message }}</td>
+                            <td><span class="status-badge status-{{ sub.status }}">{{ sub.status }}</span></td>
+                            <td>
+                                <form action="{{ url_for('update_submission_status', id=sub.id) }}" method="POST"
+                                    style="display: inline;">
+                                    {% if sub.status == 'pending' %}
+                                    <input type="hidden" name="status" value="contacted">
+                                    <button type="submit" class="btn-secondary"
+                                        style="padding: 2px 8px; font-size: 0.8rem;">Mark Contacted</button>
+                                    {% else %}
+                                    <input type="hidden" name="status" value="pending">
+                                    <button type="submit" class="btn-secondary"
+                                        style="padding: 2px 8px; font-size: 0.8rem; opacity: 0.6;">Mark Pending</button>
+                                    {% endif %}
+                                </form>
+                            </td>
+                        </tr>
+                        {% else %}
+                        <tr>
+                            <td colspan="8" style="text-align: center;">No submissions found.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+
+    <script src="{{ url_for('static', filename='js/admin.js') }}"></script>
+</body>
+
+</html>

@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Settings - WhatsFlow Admin</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+
+<body class="admin-body">
+    <!-- Sidebar -->
+    <aside class="admin-sidebar">
+        <div class="sidebar-brand">
+            <i class="fab fa-whatsapp" style="margin-right: 10px; color: var(--accent-color);"></i> WhatsFlow
+        </div>
+        <ul class="sidebar-menu">
+            <li><a href="{{ url_for('admin_dashboard') }}"><i class="fas fa-home"></i> Dashboard</a></li>
+            <li><a href="{{ url_for('admin_submissions') }}"><i class="fas fa-users"></i> Submissions</a></li>
+            <li><a href="{{ url_for('admin_pricing') }}"><i class="fas fa-tags"></i> Pricing</a></li>
+            <li><a href="{{ url_for('admin_settings') }}" class="active"><i class="fas fa-cog"></i> Settings</a></li>
+            <li><a href="{{ url_for('index') }}" target="_blank"><i class="fas fa-external-link-alt"></i> View Site</a>
+            </li>
+            <li><a href="{{ url_for('admin_logout') }}"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+        </ul>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="admin-main">
+        <header class="admin-header">
+            <div class="user-info">
+                <span>{{ current_user.email }}</span>
+                <i class="fas fa-user-circle" style="margin-left: 10px; font-size: 1.5rem;"></i>
+            </div>
+        </header>
+
+        <div class="admin-content">
+            <h2 style="margin-bottom: 1.5rem;">Settings</h2>
+
+            {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+            {% for category, message in messages %}
+            <div class="alert alert-{{ category }}"
+                style="margin-bottom: 1rem; padding: 10px; border-radius: 4px; {% if category == 'success' %}background: #d4edda; color: #155724;{% else %}background: #f8d7da; color: #721c24;{% endif %}">
+                {{ message }}</div>
+            {% endfor %}
+            {% endif %}
+            {% endwith %}
+
+            <!-- Change Email -->
+            <div class="login-card" style="max-width: 600px; margin: 0 0 2rem;">
+                <h3 style="margin-bottom: 1.5rem; color: var(--primary-color);"><i class="fas fa-envelope"></i> Change
+                    Email</h3>
+                <form action="{{ url_for('admin_change_email') }}" method="POST">
+                    <div style="margin-bottom: 1rem;">
+                        <label style="display: block; margin-bottom: 0.5rem; font-weight: 500;">Current Email</label>
+                        <input type="email" value="{{ current_user.email }}" class="form-control"
+                            style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px;" readonly>
+                    </div>
+
+                    <div style="margin-bottom: 1rem;">
+                        <label style="display: block; margin-bottom: 0.5rem; font-weight: 500;">New Email</label>
+                        <input type="email" name="new_email" class="form-control"
+                            style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px;" required>
+                    </div>
+
+                    <div style="margin-bottom: 1.5rem;">
+                        <label style="display: block; margin-bottom: 0.5rem; font-weight: 500;">Current Password (for
+                            verification)</label>
+                        <input type="password" name="current_password" class="form-control"
+                            style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px;" required>
+                    </div>
+
+                    <button type="submit" class="btn-primary"><i class="fas fa-save"></i> Update Email</button>
+                </form>
+            </div>
+
+            <!-- Change Password -->
+            <div class="login-card" style="max-width: 600px; margin: 0;">
+                <h3 style="margin-bottom: 1.5rem; color: var(--primary-color);"><i class="fas fa-lock"></i> Change
+                    Password</h3>
+                <form action="{{ url_for('admin_change_password') }}" method="POST">
+                    <div style="margin-bottom: 1rem;">
+                        <label style="display: block; margin-bottom: 0.5rem; font-weight: 500;">Current Password</label>
+                        <input type="password" name="current_password" class="form-control"
+                            style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px;" required>
+                    </div>
+
+                    <div style="margin-bottom: 1rem;">
+                        <label style="display: block; margin-bottom: 0.5rem; font-weight: 500;">New Password</label>
+                        <input type="password" name="new_password" class="form-control"
+                            style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px;"
+                            minlength="8" required>
+                        <p style="font-size: 0.8rem; color: #666; margin-top: 5px;">Minimum 8 characters</p>
+                    </div>
+
+                    <div style="margin-bottom: 1.5rem;">
+                        <label style="display: block; margin-bottom: 0.5rem; font-weight: 500;">Confirm New
+                            Password</label>
+                        <input type="password" name="confirm_password" class="form-control"
+                            style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px;"
+                            minlength="8" required>
+                    </div>
+
+                    <button type="submit" class="btn-primary"><i class="fas fa-save"></i> Update Password</button>
+                </form>
+            </div>
+
+            <!-- Email Notifications -->
+            <div class="login-card" style="max-width: 600px; margin: 2rem 0 0;">
+                <h3 style="margin-bottom: 1.5rem; color: var(--primary-color);"><i class="fas fa-bell"></i> Email
+                    Notifications</h3>
+                <form>
+                    <div style="margin-bottom: 1rem;">
+                        <label style="display: block; margin-bottom: 0.5rem;">Notification Email</label>
+                        <input type="email" value="{{ config['ADMIN_EMAIL'] }}" class="form-control"
+                            style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px;" readonly>
+                        <p style="font-size: 0.8rem; color: #666; margin-top: 5px;">To change this email, please update
+                            the .env file on the server.</p>
+                    </div>
+
+                    <div style="margin-bottom: 1rem;">
+                        <label style="display: block; margin-bottom: 0.5rem;">SMTP Server</label>
+                        <input type="text" value="{{ config['MAIL_SERVER'] }}" class="form-control"
+                            style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px;" readonly>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </main>
+</body>
+
+</html>

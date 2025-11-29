@@ -1,0 +1,151 @@
+{% extends "base.html" %}
+
+{% block title %}WhatsFlow Automation - Smart WhatsApp Sales & Support{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero">
+    <div class="container">
+        <h1>Turn Your WhatsApp Into a<br>Smart 24/7 Sales & Support Machine.</h1>
+        <p>Automate conversations. Qualify leads instantly. Close customers even while you sleep.</p>
+        <div class="hero-buttons">
+            <a href="{{ url_for('contact') }}" class="btn-primary">Automate My WhatsApp Today</a>
+            <button id="watch-demo-btn" class="btn-secondary">Watch Demo</button>
+        </div>
+    </div>
+</section>
+
+<!-- WhatsApp Demo Modal -->
+<div id="demo-modal" class="modal">
+    <div class="modal-content">
+        <span class="close-modal">&times;</span>
+        <div class="whatsapp-container">
+            <div class="whatsapp-header">
+                <div class="whatsapp-avatar">
+                    <i class="fab fa-whatsapp"></i>
+                </div>
+                <div class="whatsapp-info">
+                    <div class="whatsapp-name">WhatsFlow Assistant</div>
+                    <div class="whatsapp-status">Online</div>
+                </div>
+            </div>
+            <div class="whatsapp-body" id="chat-body">
+                <!-- Messages will appear here -->
+            </div>
+            <div class="whatsapp-footer">
+                <div class="whatsapp-input">Type a message...</div>
+                <div class="whatsapp-mic">
+                    <i class="fas fa-microphone"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Curiosity Section -->
+<section class="curiosity">
+    <div class="container">
+        <h2>What if your WhatsApp could talk, sell, explain, book, and follow up — without you touching your phone?</h2>
+        <p style="font-size: 1.2rem; max-width: 800px; margin: 0 auto; opacity: 0.9;">
+            Imagine a world where every customer gets an instant, intelligent response, no matter the time of day.
+            That's the power of WhatsFlow Automation.
+        </p>
+    </div>
+</section>
+
+<!-- How It Works -->
+<section id="how-it-works" class="how-it-works">
+    <div class="container">
+        <h2 style="margin-bottom: 3rem;">How It Works</h2>
+        <div class="steps-container">
+            <div class="step">
+                <div class="step-number">1</div>
+                <h3>Connect Account</h3>
+                <p>Link your WhatsApp Business account to our secure platform in seconds.</p>
+            </div>
+            <div class="step">
+                <div class="step-number">2</div>
+                <h3>Choose Style</h3>
+                <p>Select your automation style and customize your AI agent's personality.</p>
+            </div>
+            <div class="step">
+                <div class="step-number">3</div>
+                <h3>Go Live</h3>
+                <p>Your smart WhatsApp agent takes over, handling chats 24/7.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Features Preview -->
+<section class="features">
+    <div class="container">
+        <h2 style="text-align: center;">Why Choose WhatsFlow?</h2>
+        <div class="features-grid">
+            <div class="feature-card">
+                <i class="fas fa-robot feature-icon"></i>
+                <h3>AI-Powered Auto-Replies</h3>
+                <p>Intelligent responses that understand context and intent, not just keywords.</p>
+            </div>
+            <div class="feature-card">
+                <i class="fas fa-filter feature-icon"></i>
+                <h3>Lead Qualification</h3>
+                <p>Automatically filter and qualify leads before they reach your sales team.</p>
+            </div>
+            <div class="feature-card">
+                <i class="fas fa-calendar-check feature-icon"></i>
+                <h3>Appointment Scheduling</h3>
+                <p>Let clients book appointments directly through WhatsApp chat.</p>
+            </div>
+            <div class="feature-card">
+                <i class="fas fa-language feature-icon"></i>
+                <h3>Multi-Language Support</h3>
+                <p>Communicate fluently with customers in over 50 languages.</p>
+            </div>
+            <div class="feature-card">
+                <i class="fas fa-user-friends feature-icon"></i>
+                <h3>Human-Like Responses</h3>
+                <p>Natural conversations that feel personal and authentic.</p>
+            </div>
+            <div class="feature-card">
+                <i class="fas fa-code feature-icon"></i>
+                <h3>Zero Coding Needed</h3>
+                <p>Get started immediately without any technical knowledge required.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Testimonials -->
+<section class="testimonials" style="background-color: #f9f9f9; padding: 5rem 2rem; text-align: center;">
+    <div class="container">
+        <h2 style="margin-bottom: 3rem;">What Our Clients Say</h2>
+        <div class="features-grid">
+            <div class="feature-card">
+                <p>"WhatsFlow transformed our customer service. We're closing 3x more deals now!"</p>
+                <h4 style="margin-top: 1rem;">- Sarah J., Real Estate Agent</h4>
+            </div>
+            <div class="feature-card">
+                <p>"The AI is incredibly human-like. My customers can't tell the difference."</p>
+                <h4 style="margin-top: 1rem;">- Mike T., E-commerce Owner</h4>
+            </div>
+            <div class="feature-card">
+                <p>"Setup was a breeze. I was up and running in less than 15 minutes."</p>
+                <h4 style="margin-top: 1rem;">- Elena R., Clinic Manager</h4>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Final CTA -->
+<section class="final-cta"
+    style="background-color: var(--primary-color); color: white; padding: 5rem 2rem; text-align: center;">
+    <div class="container">
+        <h2 style="color: white; margin-bottom: 1.5rem;">Start Automating Today</h2>
+        <p style="font-size: 1.25rem; margin-bottom: 2.5rem; opacity: 0.9;">Let WhatsFlow Handle the Conversations while
+            you grow your business.</p>
+        <a href="{{ url_for('contact') }}" class="btn-primary" style="font-size: 1.2rem; padding: 15px 30px;">Get
+            Started Now</a>
+    </div>
+</section>
+{% endblock %}
