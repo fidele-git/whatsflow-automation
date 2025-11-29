@@ -2,7 +2,10 @@ version: '3.8'
 
 services:
   web:
-    build: .
+    # Use pre-built image from GitHub Container Registry
+    image: ghcr.io/fidele-git/whatsflow-automation:latest
+    # Or build locally
+    # build: .
     container_name: whatsflow-web
     ports:
       - "5000:5000"
@@ -16,7 +19,7 @@ services:
       - ./temp_exports:/app/temp_exports
     restart: unless-stopped
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:5000/"]
+      test: [ "CMD", "curl", "-f", "http://localhost:5000/" ]
       interval: 30s
       timeout: 3s
       retries: 3

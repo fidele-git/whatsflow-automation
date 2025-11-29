@@ -68,18 +68,26 @@ sudo apt install -y docker-compose
    cd whatsflow-automation
    ```
 
-2. **Configure Environment**
+2. **Login to GitHub Container Registry**
+   ```bash
+   # Use your GitHub username and a Personal Access Token (with read:packages scope)
+   echo $CR_PAT | docker login ghcr.io -u YOUR_GITHUB_USERNAME --password-stdin
+   ```
+
+3. **Configure Environment**
    ```bash
    cp .env.example .env
    nano .env  # Edit with your configuration
    ```
 
-3. **Build and Run**
+4. **Start Application**
    ```bash
+   # Pull latest image and start
+   docker-compose pull
    docker-compose up -d
    ```
 
-4. **Initialize Database**
+5. **Initialize Database**
    ```bash
    docker-compose exec web python init_pricing.py
    docker-compose exec web python scripts/create_admin.py
